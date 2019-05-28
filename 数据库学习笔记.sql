@@ -27,12 +27,15 @@ CREATE TABLE P(
 	STATUS INT,
 	CITY CHAR(20)
 );
-
-ALTER TABLE P /*选中表*/ADD/*操作符*/ primary key(SNO)/*操作内容*/; -- 增加
+-- 修改属性
+ALTER TABLE P /*选中表*/ADD/*操作符*/ primary key(SNO)/*操作内容*/; -- 增加属性
 ALTER TABLE P DROP primary key;									  -- 只能删除主键约束
 ALTER TABLE P DROP index SNO;                                     -- 删除指定属性的约束
-ALTER TABLE P MODIFY SNO CHAR(5)/*数据类型*/ primary key;		  -- 修改
-
+ALTER TABLE P MODIFY SNO CHAR(5)/*数据类型*/ primary key;		  -- 修改属性
+-- 修改字段
+ALTER TABLE P ADD SSIZE INT NOT NULL;					-- 增加字段
+ALTER TABLE P DROP SSIZE;								-- 删除字段
+ALTER TABLE P change SNAME SNAME VARCHAR(10) not null;	-- 修改字段
 -- 增删查改
 
 INSERT INTO S VALUES('S1','精益',20,'天津');
@@ -216,5 +219,92 @@ mysql> DELETE FROM class where id=4;		   -- 删除失败，子表里用了4班
 	-- 第三范式：满足第二范式的情况下，除开主键列的其他列之间不能有传递依赖
 
 
+-- 查询准备
 
+-- 学生表
+-- Student
+-- 学号
+-- 姓名
+-- 性别
+-- 出生年月日
+-- 所在班级
+CREATE TABLE student(
+	sno VARCHAR(20)primary key,
+	sname VARCHAR(20)NOT NULL,
+	ssex VARCHAR(20)NOT NULL,
+	sbirthday DATETIME,
+	class VARCHAR(20)
+);
 
+-- 教师表
+-- Teacher
+-- 教师编号
+-- 教师名字
+-- 教师性别
+-- 出生年月日
+-- 职称
+-- 所在部门
+CREATE TABLE teacher(
+	tno VARCHAR(20)primary key,
+	tname VARCHAR(20)NOT NULL,
+	tsex VARCHAR(10)NOT NULL,
+	tbirthday DATETIME,
+	prof VARCHAR(20)NOT NULL,
+	depart VARCHAR(20)NOT NULL
+);
+
+-- 课程表
+-- Course
+-- 课程号
+-- 课程名称
+-- 教师编号
+CREATE TABLE course(
+	cno VARCHAR(20)primary key,
+	cname VARCHAR(20)NOT NULL,
+	tno VARCHAR(20)NOT NULL,
+	foreign key(tno)references teacher(tno)
+);
+
+-- 成绩表
+-- Score
+-- 学号
+-- 课程号
+-- 成绩
+CREATE TABLE score(
+	sno VARCHAR(20),
+	cno VARCHAR(20),
+	degree decimal,
+	foreign key(sno)references student(sno),
+	foreign key(cno)references course(cno),
+	primary key(sno,cno)
+);
+-- 插入数据
+INSERT INTO student VALUES('101','董兴旺','男','1999-08-20','191173');
+INSERT INTO student VALUES('102','李生茂','男','1998-10-20','191173');
+INSERT INTO student VALUES('103','陈柳','女','1999-02-15','191172');
+INSERT INTO student VALUES('104','陈子涵','男','1997-10-20','101152');
+INSERT INTO student VALUES('105','杨文','男','2000-01-03','080015');
+INSERT INTO student VALUES('106','张楚研','男','2001-04-03','194162');
+INSERT INTO student VALUES('107','卢清华','女','1998-05-13','191161');
+
+INSERT INTO teacher VALUES('804','李宏伟','男','1979-08-07','教授','数理学院');
+INSERT INTO teacher VALUES('856','赵曼','女','1965-10-17','副教授','计算机学院');
+INSERT INTO teacher VALUES('825','童恒建','男','1978-02-05','教授','计算机学院');
+INSERT INTO teacher VALUES('831','李超群','女','1985-12-07','讲师','数理学院');
+
+INSERT INTO course VALUES('3-105','线性代数','804');
+INSERT INTO course VALUES('3-235','人工智能','856');
+INSERT INTO course VALUES('6-166','深入浅出MFC','825');
+INSERT INTO course VALUES('8-122','概率论与数理统计','831');
+
+INSERT INTO score VALUES('101','3-105','83');
+INSERT INTO score VALUES('101','3-235','89');
+INSERT INTO score VALUES('101','6-166','99');
+INSERT INTO score VALUES('101','8-122','75');
+INSERT INTO score VALUES('102','3-235','83');
+INSERT INTO score VALUES('102','8-122','87');
+INSERT INTO score VALUES('103','6-166','80');
+INSERT INTO score VALUES('103','8-122','92');
+INSERT INTO score VALUES('104','3-105','83');
+INSERT INTO score VALUES('105','3-235','85');
+INSERT INTO score VALUES('106','3-105','84');
