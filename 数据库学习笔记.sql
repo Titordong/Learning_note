@@ -308,3 +308,55 @@ INSERT INTO score VALUES('103','8-122','92');
 INSERT INTO score VALUES('104','3-105','83');
 INSERT INTO score VALUES('105','3-235','85');
 INSERT INTO score VALUES('106','3-105','84');
+
+-- 开始查询
+SELECT *FROM student;					--查询全部
+
+SELECT sno,sname,ssex FROM student;		--查询部分列
+
+SELECT DISTINCT depart FROM teacher;	--查询不同的某个属性
+
+SELECT *FROM score WHERE degree>=60 AND degree<=80;		-- 两种查询区间
+SELECT *FROM score WHERE degree BETWEEN 60 AND 80;
+
+SELECT *FROM score WHERE degree IN(85,75,88,90);		-- 两种查询枚举
+SELECT *FROM score WHERE degree=85 OR degree=75 OR degree =88 OR degree=90;
+
+SELECT *FROM student ORDER BY class DESC;	--降序
+SELECT *FROM student ORDER BY class;		--默认升序 ASC
+
+SELECT *FROM score ORDER BY cno,degree DESC;	--联合的升序降序排列
+
+SELECT COUNT(*)FROM student WHERE class='191173';	--使用函数查找
+
+SELECT sno,cno FROM score WHERE degree IN(SELECT MAX(degree)FROM score);	-- 查询最值
+SELECT sno,cno,degree FROM score ORDER BY degree DESC LIMIT 0,1;			--Limit 从n1开始，数n2个
+
+SELECT cno,avg(degree) FROM score GROUP BY cno;   	-- group by分组计算
+
+SELECT cno,avg(degree) FROM score GROUP BY cno HAVING COUNT(cno)>=3 AND cno LIKE '3%';	-- LIKE 模糊查询
+SELECT cno,COUNT(*)FROM score GROUP BY cno;			-- group 分组后用having定义条件
+
+SELECT sname ,cno,degree FROM student,score 		-- 两张表根据一个条件连接  		
+WHERE student.sno=score.sno;				
+
+SELECT sname,cname,degree FROM student,course,score 	-- 三表查询
+WHERE course.cno=score.cno AND student.sno=score.sno ORDER BY sname;
+
+SELECT cno,avg(degree)FROM score 							-- 子查询某班平均成绩
+WHERE sno IN(
+	SELECT sno FROM student WHERE class='191173'			-- 数据处理步骤：
+)GROUP BY cno;												-- 1.读数据(中间) 2.分组(后面) 3.取数据or计算(开头)
+
+SELECT score.cno,cname,avg(degree)FROM score,course			-- 验证数据处理顺序	
+WHERE score.cno=course.cno AND score.sno IN(
+	SELECT student.sno FROM student WHERE class='191173'	
+)GROUP BY score.cno;	
+
+SELECT *FROM student WHERE sno IN(
+SELECT sno FROM score
+WHERE student.sno=score.sno AND cno='3-105'AND degree>(SELECT degree FROM score 
+WHERE sno='101' AND cno='3-105'));
+
+SELECT sname,degree FROM student,score
+WHERE student.sno=score.sno AND cno='3-105';
