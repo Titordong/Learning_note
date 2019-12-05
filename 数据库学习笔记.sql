@@ -351,12 +351,17 @@ WHERE sno IN(
 SELECT score.cno,cname,avg(degree)FROM score,course			-- 验证数据处理顺序	
 WHERE score.cno=course.cno AND score.sno IN(
 	SELECT student.sno FROM student WHERE class='191173'	
-)GROUP BY score.cno;	
+)GROUP BY score.cno;				
 
-SELECT *FROM student WHERE sno IN(
+SELECT *FROM student WHERE sno IN(						-- 硬核题目
 SELECT sno FROM score
 WHERE student.sno=score.sno AND cno='3-105'AND degree>(SELECT degree FROM score 
 WHERE sno='101' AND cno='3-105'));
 
-SELECT sname,degree FROM student,score
-WHERE student.sno=score.sno AND cno='3-105';
+SELECT *FROM score
+WHERE cno='3-105' AND degree>(SELECT degree FROM score 
+WHERE sno='101' AND cno='3-105');
+
+SELECT *FROM student WHERE year(sbirthday) IN(
+SELECT year(sbirthday)FROM student
+WHERE sno IN(101,105));

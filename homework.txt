@@ -1,0 +1,38 @@
+
+#!/bin/bash
+clear
+echo "Use one of the following options:
+P:To display current directory
+S:To display the name of running file
+D:To display today's date and present time
+L:To see the list of files in your present working directory
+W:To see who is logged in
+Q:To quit this program
+Enter your option and hit:"
+while true
+do
+read ans
+case "$ans" in
+P|p)
+    pwd
+    ;;
+S|s)
+    ls
+    ;;
+D|d)
+    date
+    ;;
+L|l)
+    ls -l
+    ;;
+W|w)
+    who
+    ;;
+Q|q)
+    exit 1
+    ;;
+*)
+    exit 1
+esac
+done
+exit 0
